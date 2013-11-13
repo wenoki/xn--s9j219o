@@ -29,7 +29,6 @@ class ShinuDotCom < Sinatra::Base
 
   get "/" do
     @domain = Domain.new request.host
-    @domain.count_up
     slim :application
   end
 end
