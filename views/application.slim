@@ -38,6 +38,11 @@ html itemscope= true itemtype= "http://www.schema.org/Thing"
           a href= "/"
             = @domain.decoded_name
         p.lead = @domain.info
+        .twitter
+          a href= "https://twitter.com/share" class= "twitter-share-button" data-size= "large"
+            | Tweet
+          javascript:
+            !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
       .container
         form action= "/go" method= "get"
           .input-group
