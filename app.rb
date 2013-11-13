@@ -41,7 +41,7 @@ class Domain
     self.name = name
 
     if self.rrset.exists?
-      self.view_count = self.rrset.resource_records[0][:value].to_i + 1
+      self.view_count = self.rrset.resource_records[0][:value].delete(?").to_i + 1
       self.since = DateTime.parse self.rrset.resource_records[1][:value]
       self.rrset.delete
     else
