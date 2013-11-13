@@ -28,7 +28,7 @@ class ShinuDotCom < Sinatra::Base
   end
 
   get "/" do
-    @domain = Domain.find_or_create request.host
+    @domain = Domain.new request.host
     @domain.count_up
     slim :application
   end
@@ -38,63 +38,47 @@ class Domain
   attr_accessor :name, :view_count, :since
   HostedZoneId = ENV["HOSTED_ZONE_ID"]
 
-  def initialize name, view_count = 1, since = DateTime.now
+  def initialize name
     self.name = name
-    self.view_count = view_count
-    self.since = since
+
+    if self.rrset.exists?
+      self.view_count = self.rrset.resource_records[0][:value].to_i + 1
+      self.since = DateTime.parse self.rrset.resource_records[1][:value]
+      self.rrset.delete
+    else
+      self.view_count = 1
+      self.since = DateTime.now
+    end
+
+    self.create_rrset
   end
 
-  def count_up
-    self.view_count += 1
-    self.save
+  def rrset
+    Domain.rrsets[self.name + ?., "TXT"]
   end
 
-  def save
-    rrset = self.class.rrset(self.name)
-    rrset.resource_records[0][:value] = %("#{self.view_count}")
-    rrset.resource_records[1][:value] = %("#{self.since.to_s}")
-    rrset.update
+  def create_rrset
+    Domain.rrsets.create(
+      self.name,
+      "TXT",
+      ttl: 300,
+      resource_records: [
+        {value: %("#{self.view_count}")},
+        {value: %("#{self.since.to_s}")},
+      ]
+    )
   end
 
   def decoded_name
     SimpleIDN.to_unicode self.name
   end
 
-  def self.find name
-    self.new(
-      name,
-      rrset(name).resource_records[0][:value].to_i,
-      DateTime.parse(rrset(name).resource_records[1][:value]),
-    )
-  end
-
-  def self.create name
-    rrsets.create(
-      name,
-      "TXT",
-      ttl: 300,
-      resource_records: [
-        {value: %("1")},
-        {value: %("#{DateTime.now}")},
-      ]
-    )
-    self.new name
-  end
-
-  def self.find_or_create name
-    if rrset(name).exists?
-      find name
-    else
-      create name
-    end
+  def info
+    "Viewed #{@domain.view_count > 1 ? @domain.view_count.with_delimiter + "times" : "once"} since #{@domain.since.strftime "%B %d, %Y %I:%M %p"}."
   end
 
   def self.rrsets
     AWS::Route53::HostedZone.new(HostedZoneId).rrsets
-  end
-
-  def self.rrset name
-    rrsets[name + ?., "TXT"]
   end
 end
 

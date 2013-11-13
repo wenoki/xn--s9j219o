@@ -24,14 +24,13 @@ html itemscope= true itemtype= "http://www.schema.org/Thing"
     .container
       header
         p.text-muted
-          a href= ShinuDotCom::DomainName
+          a href= "http://#{ShinuDotCom::DomainName}/"
             | 死ぬ.com
       .jumbotron
         h1
           a href= "/"
             = @domain.decoded_name
-        p.lead
-          | Viewed #{@domain.view_count.with_delimiter} times since #{@domain.since.strftime "%B %d, %Y %I:%M %p"}.
+        p.lead = @domain.info
       footer
         p
           a href= "https://github.com/wenoki/xn--s9j219o"
