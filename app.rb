@@ -73,7 +73,7 @@ class Domain
   end
 
   def info
-    "Viewed #{@domain.view_count > 1 ? @domain.view_count.with_delimiter + "times" : "once"} since #{@domain.since.strftime "%B %d, %Y %I:%M %p"}."
+    "Viewed #{self.view_count > 1 ? self.view_count.with_delimiter + "times" : "once"} since #{self.since.strftime "%B %d, %Y %I:%M %p"}."
   end
 
   def self.rrsets
