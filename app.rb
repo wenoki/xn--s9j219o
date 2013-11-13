@@ -44,25 +44,16 @@ class Domain
   def initialize name
     self.name = name
 
-    if self.rrset.exists?
-      self.view_count = self.rrset.resource_records[0][:value].delete(?").to_i + 1
-      self.since = DateTime.parse self.rrset.resource_records[1][:value]
-      self.rrset.delete
+    if self.rrset("TXT").exists?
+      self.view_count = self.rrset("TXT").resource_records[0][:value].delete(?").to_i + 1
+      self.since = DateTime.parse self.rrset("TXT").resource_records[1][:value]
+      self.rrset("TXT").delete
     else
       self.view_count = 1
       self.since = DateTime.now
     end
 
-    self.create_rrset
-  end
-
-  def rrset
-    Domain.rrsets[self.name + ?., "TXT"]
-  end
-
-  def create_rrset
-    Domain.rrsets.create(
-      self.name,
+    self.create_rrset(
       "TXT",
       ttl: 300,
       resource_records: [
@@ -70,6 +61,25 @@ class Domain
         {value: %("#{self.since.to_s}")},
       ]
     )
+
+    unless self.rrset("A").exists?
+      self.create_rrset(
+        "A",
+        alias_target: {
+          hosted_zone_id: Domain::HostedZoneId,
+          dns_name: ShinuDotCom::DomainName,
+          evaluate_target_health: false
+        }
+      )
+    end
+  end
+
+  def rrset type
+    Domain.rrsets[self.name + ?., type]
+  end
+
+  def create_rrset type, options
+    Domain.rrsets.create self.name, type, options
   end
 
   def decoded_name
