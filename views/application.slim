@@ -31,6 +31,15 @@ html itemscope= true itemtype= "http://www.schema.org/Thing"
           a href= "/"
             = @domain.decoded_name
         p.lead = @domain.info
+      .container
+        form action= "/go" method= "get"
+          .input-group
+            span.input-group-btn
+              button.btn.btn-default type= "submit"
+                | Go to...
+            input.form-control type= "text" placeholder= "死因を入力して" name= "to"
+            span.input-group-addon
+              | .死ぬ.com
       footer
         p
           a href= "https://github.com/wenoki/xn--s9j219o"

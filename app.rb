@@ -24,12 +24,16 @@ class ShinuDotCom < Sinatra::Base
   end
 
   error do
-    redirect SimpleIDN.to_ascii("エラーが発生したので.") + DomainName
+    redirect "http://#{SimpleIDN.to_ascii("エラーが発生したので.") + DomainName}/"
   end
 
   get "/" do
     @domain = Domain.new request.host
     slim :application
+  end
+
+  get "/:to" do
+    redirect "http://#{SimpleIDN.to_ascii(params[:to]) + ?. + DomainName}"
   end
 end
 
@@ -73,7 +77,7 @@ class Domain
   end
 
   def info
-    "Viewed #{self.view_count > 1 ? self.view_count.with_delimiter + "times" : "once"} since #{self.since.strftime "%B %d, %Y %I:%M %p"}."
+    "Viewed #{self.view_count > 1 ? self.view_count.with_delimiter + " times" : "once"} since #{self.since.strftime "%B %d, %Y %I:%M %p"}."
   end
 
   def self.rrsets
