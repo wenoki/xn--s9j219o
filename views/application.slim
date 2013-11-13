@@ -1,32 +1,25 @@
 doctype html
-html
+html itemscope= true itemtype= "http://www.schema.org/Thing"
   head
     meta charset= "utf-8"
-    title
-      | 帰りたいにゃん
-    meta name= "description" content= "帰りたい人による帰りたい人のための帰りたいWebサービス"
-    meta itemprop= "name" content= "帰りたいにゃん"
-    meta itemprop= "description" content= "帰りたい人による帰りたい人のための帰りたいWebサービス"
-    meta property= "og:title" content= "帰りたいにゃん"
-    meta property= "og:description" content= "帰りたい人による帰りたい人のための帰りたいWebサービス"
+    title = @domain.decoded_name
+    meta name= "description" content= @domain.decoded_name
+    meta itemprop= "name" content= @domain.decoded_name
+    meta itemprop= "description" content= @domain.decoded_name
+    meta property= "og:title" content= @domain.decoded_name
+    meta property= "og:description" content= @domain.decoded_name
     meta property= "og:type" content= "website"
     meta property= "og:url" content= request.url
-    meta property= "og:email" content= "i@dec31.net"
-    meta property= "og:image" content= "http://kaeritainess.dec31.net/1.png"
-    meta property= "twitter:card" content= "summary_large_image"
-    meta property= "twitter:title" content= "帰りたいにゃん"
-    meta property= "twitter:description" content= "帰りたい人による帰りたい人のための帰りたいWebサービス"
-    meta property= "twitter:site" content= "@kaeritainess"
-    meta property= "twitter:creator" content= "@kaeritainess"
-    meta property= "twitter:image:src" content= "http://kaeritainess.dec31.net/1.png"
+    meta property= "og:email" content= "nomail@xn--s9j219o.com"
+    meta property= "twitter:card" content= "summary"
+    meta property= "twitter:title" content= @domain.decoded_name
+    meta property= "twitter:description" content= @domain.decoded_name
     script src= "http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"
     script src= "//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"
     link rel= "stylesheet" href= "//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
     link rel= "stylesheet" href= "//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css"
     link rel= "shortcut icon" href= "/favicon.ico" type= "image/x-icon"
     sass:
-      $lightgreen: #b2d1c4
-      $red: #d25364
       body
         > #main
           min-height: 240px
@@ -77,99 +70,18 @@ html
               a
                 color: inherit
   body
-    nav.navbar.navbar-default.navbar-fixed-top
-      .container
-        .navbar-header
-          a.navbar-brand href= "/"
-            span.glyphicon.glyphicon-home
-            |  帰りたいにゃん
-        .navbar-collapse.collapse
-          .navbar-nav.navbar-right
-            - if authenticated?
-              p.navbar-text
-                ' Signed in as
-                a href= "https://twitter.com/#{current_user_nickname}"
-                  = "@#{current_user_nickname}"
-              a.btn.btn-info.navbar-btn href= "/signout"
-                | Sign out
-            - else
-              a.btn.btn-info.navbar-btn href= "/signin"
-                | Sign in with Twitter
-    #main.jumbotron
-      .container
-        == yield
-    #count.jumbotron
-      .container
-        h1
-          = Kaeritai.count.with_delimiter
-        p
-          | これまで帰りたかった回数
     .container
-      .row
-        #about.col-lg-4
-          h2
-            | なにこれ
-          p
-            | 帰りたい人による帰りたい人のための帰りたいWebサービスです。
-          p
-            - if authenticated?
-              | Twitterでログイン（もうしてます）
-            - else
-              a href= "/signin"
-                | Twitterでログイン
-            | して、
-            span.label.label-success
-              span.glyphicon.glyphicon-home
-              |  帰りたい
-            | ボタンを押すと
-            a href= "https://twitter.com/kaeritainess"
-              | 帰りたいにゃん
-            | があなたの代わりにその想いをつぶやきます。
-          h2
-            | イラスト募集
-          p
-            | 帰りたいにゃんのイラストを募集中です。
-            a href= "https://twitter.com/kaeritainess"
-              | @kaeritainess
-            | 宛てにリプライで送ってください！
-          h6
-            | 提供感謝（敬称略）
-          ul
-            - Media.authors.each do |author|
-              li
-                a href= "https://twitter.com/#{author}"
-                 = "@" + author
-        #recent.col-lg-4
-          h2
-            | 最近の
-          ul.list-group
-            - Kaeritai.each_with_index do |kaeritai, i|
-              - break if i == 8
-              li.list-group-item
-                a href= "/kaeritai/#{kaeritai.serial}"
-                  = kaeritai.serial.with_delimiter
-                  ' 回目 -
-                  = kaeritai.created_at.strftime "%Y/%m/%d %H:%M:%S"
-        #weekly.col-lg-4
-          h2
-            | 週間帰りたみ
-          ul.list-group
-            - 8.times do |i|
-              - day = Date.today - i
-              li.list-group-item class= day.strftime("%A").downcase
-                = day.strftime "%Y/%m/%d (%a)"
-                span.badge
-                  = Kaeritai.by_day(day).count.with_delimiter
-      hr
+      header
+        p.text-muted
+          a href= ShinuDotCom::DomainName
+            | 死ぬ.com
+      .jumbotron
+        h1
+          a href= "/"
+            = @domain.decoded_name
+        p.lead
+          | Viewed #{@domain.view_count.with_delimiter} times since #{@domain.since.strftime "%B %d, %Y %I:%M %p"}.
       footer
-        ul
-          li
-            span.glyphicon.glyphicon-home
-            |  Kaeritainess
-          li
-            a href= "https://github.com/wenoki/kaeritainess"
-              | Source on GitHub
-          li
-            ' Illustration by
-            a href= "https://twitter.com/underscape"
-              | @underscape
+        p
+          a href= "https://github.com/wenoki/xn--s9j219o"
+            | Source on GitHub
