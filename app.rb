@@ -50,6 +50,13 @@ class Domain
     self.save
   end
 
+  def save
+    rrset = self.class.rrset(self.name)
+    rrset.resource_records[0][:value] = %("#{self.view_count}")
+    rrset.resource_records[1][:value] = %("#{self.since.to_s}")
+    rrset.update
+  end
+
   def decoded_name
     SimpleIDN.to_unicode self.name
   end
@@ -63,6 +70,15 @@ class Domain
   end
 
   def self.create name
+    rrsets.create(
+      name,
+      "TXT",
+      ttl: 300,
+      resource_records: [
+        {value: %("1")},
+        {value: %("#{DateTime.now}")},
+      ]
+    )
     self.new name
   end
 
@@ -74,16 +90,12 @@ class Domain
     end
   end
 
-  def self.rrset name
-    AWS::Route53::HostedZone.new(HostedZoneId).rrsets[name + ?., "TXT"]
+  def self.rrsets
+    AWS::Route53::HostedZone.new(HostedZoneId).rrsets
   end
 
-  private
-  def save
-    rrset = self.class.rrset(self.name)
-    rrset.resource_records[0][:value] = %("#{self.view_count}")
-    rrset.resource_records[1][:value] = %("#{self.since.to_s}")
-    rrset.update
+  def self.rrset name
+    rrsets[name + ?., "TXT"]
   end
 end
 
