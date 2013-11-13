@@ -32,7 +32,7 @@ class ShinuDotCom < Sinatra::Base
     slim :application
   end
 
-  get "/:to" do
+  get "/go" do
     redirect "http://#{SimpleIDN.to_ascii(params[:to]) + ?. + DomainName}"
   end
 end
