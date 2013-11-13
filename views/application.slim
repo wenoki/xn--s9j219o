@@ -21,54 +21,6 @@ html itemscope= true itemtype= "http://www.schema.org/Thing"
     link rel= "shortcut icon" href= "/favicon.ico" type= "image/x-icon"
     sass:
       body
-        > #main
-          min-height: 240px
-          margin: 0
-          padding: 75px 50px 25px
-          background:
-            color: $lightgreen
-            image: url("/1_top.png")
-            size: 380px auto
-            repeat: no-repeat
-            position: 100px bottom
-          color: white
-          p
-            a
-              &:link, &:visited, &:hover, &:active
-                color: darken($lightgreen, 30%)
-          > .container
-            padding-left: 360px
-        > #count
-          height: 150px
-          padding: 0
-          background:
-            color: $red
-            image: url("/1_bottom.png")
-            size: 380px auto
-            repeat: no-repeat
-            position: 100px top
-          text-align: right
-          color: white
-        #weekly
-          ul
-            color: #777
-            .saturday
-              color: #428bca
-            .sunday
-              color: #d9534f
-            .monday
-              color: black
-        footer
-          margin: 0 0 0.5em
-          ul
-            margin: 0
-            padding: 0
-            li
-              display: inline-block
-              margin: 0 0.5em
-              color: #ccc
-              a
-                color: inherit
   body
     .container
       header
