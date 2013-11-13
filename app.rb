@@ -29,9 +29,8 @@ class ShinuDotCom < Sinatra::Base
 
   get "/" do
     @domain = Domain.find_or_create request.host
-    @domain.view_count
-    slim :application
     @domain.count_up
+    slim :application
   end
 end
 
